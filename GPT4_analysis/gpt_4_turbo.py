@@ -13,29 +13,22 @@ file = client.files.create(
 )
 
 def write_message_to_file(message):
-    with open('message_output_newgptprompt.csv', 'a') as file:  # 'a' mode appends to the file without overwriting
+    with open('message_output.csv', 'a') as file:  # 'a' mode appends to the file without overwriting
         file.write(message + '\n')
 
 def create_assistant():
     assistant = client.beta.assistants.create(
-        instructions="""The GPT's role is to process datasets containing social media comments, categorizing each comment based on specified labels related to the perception and characterization of AI and robotics. The goal is to assist a researcher in labeling data accurately and efficiently, paying special attention to nuances in language that may imply humanization, autonomy, emotional responses towards technology and underestimation of AI. It should infer sentiments or labels as good as it can without going over the labeling guidelines. The GPT should not ask questions to ensure accurate categorization, rather use logical thinking for that. It should just label the data, focusing on the task of data labeling with precision and adherence to the labeling guidelines.
+        instructions="""The GPT's role is to process datasets containing social media comments, categorizing each comment based on specified labels related to the perception and characterization of AI and robotics. The goal is to assist a researcher in labeling data accurately and efficiently, paying special attention to nuances in language that may imply humanization, autonomy, emotional responses towards technology and underestimation of AI. It should avoid making assumptions beyond the data provided, and should not infer sentiments or labels that aren't clearly expressed in the text. The GPT should not ask questions to ensure accurate categorization, rather use logical thinking for that. It should just label the data, focusing on the task of data labeling with precision.
 
     Your output for the input:
     x;x;x;x;x;x;x
     You ONLY replace the x's with concrete 0 or 1, depending on your suggestion for the labels.
 
-    Labels and labeling guidelines are the follwing:
-    - Humanization (The person writing the comment assigns human characteristics like emotions and cognition in any form to the robot. The robot is seen as a living being.)
-    - Autonomy (The person writing the comment overestimates the robot's autonomy. For example they think that the robot can come up with moves in any given situation being able to create a dance choreography to any song.)
-    - Performance (The person writing the comment overestimates the robot's performance. They think that the robot always performs perfectly and they neglect the failures and errors that are not shown in the video.)
-    - Positive (The person writing the comment has a positive sentiment towards the robots.)
-    - Neutral (The person writing the comment has a neutral sentiment towards the robots.)
-    - Negative (The person writing the comment has a negative sentiment towards the robots.)
-    
+    Labels are: Human characteristics / Humanization, Performance of the AI as in actions the AI doing like balance or move or dance, Autonomy, Positiv sentiment towards AI, Neutral sentiment towards AI, Negativ sentiment towards AI, Underestimation of AI
     Only decide labels depending on comments directed towards something about the AI.
 
     So output will be:
-    <Human characteristics / Humanization>;<Performance>;<Autonomy>;<Positiv sentiment towards AI>;<Neutral sentiment towards AI>;<Negativ sentiment towards AI>;<Underestimation of AI>
+    <Human characteristics / Humanization>;<Performance as in AI doing actions like balance or move or dance>;<Autonomy>;<Positiv sentiment towards AI>;<Neutral sentiment towards AI>;<Negativ sentiment towards AI>;<Underestimation of AI like thinking it cannot do something but current fact true state of AI is capable of it / it is proven possible with AI>
 
     You can choose multiple labels for one example. That means you can have more than one labeled as "1" or "0".
 
@@ -44,7 +37,7 @@ def create_assistant():
     0;0;0;0;0;0;0
     
     Just set the labels that are the 7 numbers at the end. Never output any additional comments.
-    Never comment anything. Your task is only to label it according to the labeling guidelines.
+    Never comment anything. Your task is only to label it. 
     
     Adhere to the output format:
     <a>;<b>;<c>;<d>;<e>;<f>;<g>
@@ -145,12 +138,12 @@ if __name__ == '__main__':
    # untested currently, if tested = yes
     line_count = 0
 
-    #with open(file_path1, 'r') as file1:
-    #    for _ in file1:
-    #        line_count += 1
+    with open(file_path1, 'r') as file1:
+        for _ in file1:
+            line_count += 1
 
     assistant = create_assistant()
-    line_count = 0 # test
+
     line_reading_unlabeled = 0
     df = pd.read_csv("mergedv2.csv", quotechar='"', escapechar='\\', doublequote=True, quoting=csv.QUOTE_ALL)
 
